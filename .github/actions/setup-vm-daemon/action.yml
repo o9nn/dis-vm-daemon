@@ -43,17 +43,20 @@ runs:
 
         if [ -n "${{ inputs.download-url }}" ]; then
           echo "Downloading from custom URL: ${{ inputs.download-url }}"
-          # Custom download URL
+          # Custom download URL (to be implemented with actual download)
+          # curl -L -o /tmp/vm-daemon-download/vm-daemon.tar.gz "${{ inputs.download-url }}"
         else
           echo "Downloading vm-daemon version: ${{ inputs.version }}"
           # Download from default location (to be implemented)
         fi
 
-        # Create mock tarball for now
-        tar czf /tmp/vm-daemon-download/vm-daemon.tar.gz \
-          -C /tmp README.md 2>/dev/null || \
-          echo "vm-daemon-${{ inputs.version }}" > \
-          /tmp/vm-daemon-download/vm-daemon.tar.gz
+        # Create mock tarball for demonstration purposes
+        # This should be replaced with actual download logic
+        cd /tmp/vm-daemon-download
+        mkdir -p vm-daemon-mock/bin
+        echo "vm-daemon-${{ inputs.version }}" > vm-daemon-mock/bin/vm-daemon
+        tar czf vm-daemon.tar.gz vm-daemon-mock/
+        rm -rf vm-daemon-mock
         echo "✓ Download completed"
 
     - name: Verify vm-daemon.tar.gz
@@ -79,7 +82,12 @@ runs:
 
         # Extract vm-daemon
         cd /tmp/vm-daemon-download
-        tar xzf vm-daemon.tar.gz -C $HOME/.vm-daemon/bin 2>/dev/null || true
+        if tar xzf vm-daemon.tar.gz -C $HOME/.vm-daemon/bin 2>/dev/null; then
+          echo "✓ Extraction completed"
+        else
+          echo "⚠ Extraction failed, creating minimal structure"
+          mkdir -p $HOME/.vm-daemon/bin/vm-daemon-mock
+        fi
 
         DAEMON_PATH="$HOME/.vm-daemon/bin"
         echo "daemon-path=$DAEMON_PATH" >> $GITHUB_OUTPUT
@@ -99,7 +107,9 @@ runs:
         echo ""
         echo "│ component: ensureVSCodeInstalled"
 
-        VSCODE_PATH="$HOME/.vm-daemon/bin/vm-daemon-*"
+        # Create VSCode directory and use its path
+        mkdir -p $HOME/.vm-daemon/bin/vm-daemon-vscode
+        VSCODE_PATH="$HOME/.vm-daemon/bin/vm-daemon-vscode"
         echo "│ vscodePath: $VSCODE_PATH"
         echo "vscode-path=$VSCODE_PATH" >> $GITHUB_OUTPUT
         echo ""
@@ -109,7 +119,6 @@ runs:
           echo "✓ VSCode found in system PATH"
         else
           echo "⣯ Setting up VSCode environment..."
-          mkdir -p $HOME/.vm-daemon/bin/vm-daemon-vscode
           echo "✓ VSCode environment ready"
         fi
 
