@@ -2,25 +2,25 @@ name: VM Daemon Setup
 
 on:
   push:
-    branches: [ main, master ]
+    branches: [main, master]
   pull_request:
-    branches: [ main, master ]
+    branches: [main, master]
   workflow_dispatch:
 
 jobs:
   setup-vm-daemon:
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-      
+
       - name: Setup VM Daemon
         uses: ./.github/actions/setup-vm-daemon
         with:
           version: 'latest'
           install-vscode: 'true'
-      
+
       - name: Verify vm-daemon is running
         run: |
           echo "Verifying vm-daemon installation..."
