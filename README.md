@@ -96,6 +96,37 @@ Startup completed
 ✓ vm-daemon is ready and running
 ```
 
+## Testing Locally
+
+You can test the vm-daemon installation process locally using the provided test script:
+
+```bash
+./test-vm-daemon.sh latest
+```
+
+This will simulate the entire installation process and create the necessary directories under `~/.vm-daemon/bin/`.
+
+## Development
+
+### Directory Structure
+
+```
+.github/
+├── actions/
+│   └── setup-vm-daemon/
+│       └── action.yml          # Reusable composite action
+└── workflows/
+    ├── vm-daemon.yml           # Main workflow
+    └── example-usage.yml       # Example usage patterns
+```
+
+### Files
+
+- **action.yml**: The composite action that can be reused in any workflow
+- **vm-daemon.yml**: The main workflow that runs on push/PR
+- **example-usage.yml**: Examples of different usage patterns
+- **test-vm-daemon.sh**: Local testing script to simulate installation
+
 ## License
 
 See [LICENSE](LICENSE) file for details.

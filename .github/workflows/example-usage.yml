@@ -1,0 +1,67 @@
+name: Example - Advanced VM Daemon Usage
+
+on:
+  workflow_dispatch:
+
+jobs:
+  basic-setup:
+    name: Basic Setup
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup VM Daemon
+        uses: ./.github/actions/setup-vm-daemon
+        with:
+          version: 'latest'
+          install-vscode: 'true'
+
+      - name: Verify installation
+        run: |
+          echo "✓ vm-daemon is ready"
+
+  custom-setup:
+    name: Custom Setup with URL
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup VM Daemon with custom URL
+        id: setup
+        uses: ./.github/actions/setup-vm-daemon
+        with:
+          version: 'v1.0.0'
+          download-url: 'https://example.com/vm-daemon.tar.gz'
+          install-vscode: 'false'
+
+      - name: Use outputs
+        run: |
+          echo "Daemon path: ${{ steps.setup.outputs.daemon-path }}"
+          echo "Process ID: ${{ steps.setup.outputs.process-id }}"
+          echo "VSCode path: ${{ steps.setup.outputs.vscode-path }}"
+
+  multi-platform:
+    name: Multi-platform Setup
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup VM Daemon
+        uses: ./.github/actions/setup-vm-daemon
+        with:
+          version: 'latest'
+
+      - name: Verify installation
+        run: |
+          if [ -d "$HOME/.vm-daemon/bin" ]; then
+            echo "✓ vm-daemon installed on ${{ matrix.os }}"
+          fi
