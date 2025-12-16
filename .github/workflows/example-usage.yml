@@ -3,6 +3,9 @@ name: Example - Advanced VM Daemon Usage
 on:
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   basic-setup:
     name: Basic Setup
